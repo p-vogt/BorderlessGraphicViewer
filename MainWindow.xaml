@@ -1,0 +1,14 @@
+﻿<Window x:Class="BorderlessGraphicViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BorderlessGraphicViewer"
+        UseLayoutRounding="True"
+        mc:Ignorable="d"
+        Title="Borderless Window Viewer (Ctrl+C / F5)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
+    <Grid>
+        <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant"/>
+
+    </Grid>
+</Window>
