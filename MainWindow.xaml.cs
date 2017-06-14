@@ -110,23 +110,28 @@ namespace BorderlessGraphicViewer
                 DrawingVisual dv = new DrawingVisual();
                 using (DrawingContext dc = dv.RenderOpen())
                 {
-                    var converter = new BrushConverter();
-                    var brush = (System.Windows.Media.Brush)converter.ConvertFromString("#FF0000");
-                    var pen = new System.Windows.Media.Pen();
-                    pen.Brush = brush;
-                    pen.Thickness = 2;
+                    try
+                    {
+                        var converter = new BrushConverter();
+                        var brush = (System.Windows.Media.Brush)converter.ConvertFromString("#FF0000");
+                        var pen = new System.Windows.Media.Pen();
+                        pen.Brush = brush;
+                        pen.Thickness = 2;
 
-                    System.Windows.Point newMousePos = Mouse.GetPosition(this);
+                        System.Windows.Point newMousePos = Mouse.GetPosition(this);
 
-                    dc.DrawImage(image, new Rect(0, 0, image.PixelWidth, image.PixelHeight));
+                        dc.DrawImage(image, new Rect(0, 0, image.PixelWidth, image.PixelHeight));
 
-                    System.Windows.Point relativeP1 = new System.Windows.Point(image.Width * (lastMousePos.X / img.ActualWidth), (image.Height * lastMousePos.Y / img.ActualHeight));
-                    System.Windows.Point relativeP2 = new System.Windows.Point(image.Width * (newMousePos.X / img.ActualWidth), (image.Height*newMousePos.Y / img.ActualHeight));
-                    dc.DrawLine(pen, relativeP1, relativeP2);
+                        System.Windows.Point relativeP1 = new System.Windows.Point(image.Width * (lastMousePos.X / img.ActualWidth), (image.Height * lastMousePos.Y / img.ActualHeight));
+                        System.Windows.Point relativeP2 = new System.Windows.Point(image.Width * (newMousePos.X / img.ActualWidth), (image.Height * newMousePos.Y / img.ActualHeight));
+                        dc.DrawLine(pen, relativeP1, relativeP2);
 
-                    Console.WriteLine(lastMousePos);
-                    Console.WriteLine(newMousePos);
-                    lastMousePos = newMousePos;
+                        lastMousePos = newMousePos;
+                    }
+                    catch (Exception)
+                    {
+                
+                    }
                 }
 
                 RenderTargetBitmap rtb = new RenderTargetBitmap(image.PixelWidth, image.PixelHeight, 96, 96, PixelFormats.Pbgra32);
