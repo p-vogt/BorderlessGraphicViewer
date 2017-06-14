@@ -78,6 +78,10 @@ namespace BorderlessGraphicViewer
 
                 FitWindowSize();
             }
+            else if (Keyboard.IsKeyDown(Key.F3))
+            {
+                Topmost = !Topmost;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -142,8 +146,6 @@ namespace BorderlessGraphicViewer
                 }
 
             }
-
-
         }
 
         private Bitmap ConvertToBitmap(BitmapSource target)
