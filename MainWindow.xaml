@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Borderless Window Viewer (Ctrl+C / F5)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Grid>
-        <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant"/>
+        <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown"/>
 
     </Grid>
 </Window>
