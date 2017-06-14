@@ -115,13 +115,17 @@ namespace BorderlessGraphicViewer
                     var pen = new System.Windows.Media.Pen();
                     pen.Brush = brush;
                     pen.Thickness = 2;
-                    
 
                     System.Windows.Point newMousePos = Mouse.GetPosition(this);
 
                     dc.DrawImage(image, new Rect(0, 0, image.PixelWidth, image.PixelHeight));
-                    
-                    dc.DrawLine(pen, lastMousePos,newMousePos);
+
+                    System.Windows.Point relativeP1 = new System.Windows.Point(image.Width * (lastMousePos.X / img.ActualWidth), (image.Height * lastMousePos.Y / img.ActualHeight));
+                    System.Windows.Point relativeP2 = new System.Windows.Point(image.Width * (newMousePos.X / img.ActualWidth), (image.Height*newMousePos.Y / img.ActualHeight));
+                    dc.DrawLine(pen, relativeP1, relativeP2);
+
+                    Console.WriteLine(lastMousePos);
+                    Console.WriteLine(newMousePos);
                     lastMousePos = newMousePos;
                 }
 

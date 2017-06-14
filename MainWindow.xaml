@@ -7,8 +7,5 @@
         UseLayoutRounding="True"
         mc:Ignorable="d"
         Title="Borderless Window Viewer (Ctrl+C / F5 / F3 Topmost)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded" Topmost="True">
-    <Grid>
-        <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown"/>
-
-    </Grid>
+    <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill"/>
 </Window>
