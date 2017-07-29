@@ -18,15 +18,48 @@ using System.Windows.Threading;
 
 namespace BorderlessGraphicViewer
 {
+    public class CopyCommand : ICommand
+    {
+        BitmapImage image;
+        event EventHandler ICommand.CanExecuteChanged
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        bool ICommand.CanExecute(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICommand.Execute(object parameter)
+        {
+            if (image != null)
+            {
+                Clipboard.SetImage(image);
+            }
+        }
+    }
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool newPictureOnStack = false;
+        Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
+
+        public CopyCommand copyCommand = new CopyCommand();
         BitmapImage image;
         //initial image (without drawings)
         BitmapImage imageInit;
-        public MainWindow(String[] args)
+        public MainWindow(string[] args)
         {
             InitializeComponent();
             string filename = "";
@@ -37,33 +70,30 @@ namespace BorderlessGraphicViewer
             else
             {
 #if DEBUG
-                String appDirPath = System.Reflection.Assembly.GetEntryAssembly().Location;
-                String projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
-
-                
-                
+                string appDirPath = System.Reflection.Assembly.GetEntryAssembly().Location;
+                string projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
                 filename = projectPath + @"\debug.png";
 #endif
             }
             try
             {
-
+     
                 imageInit = new BitmapImage(new Uri(@filename, UriKind.Absolute));
                 image = imageInit;
                 img.Source = imageInit;
-
+                imageStack.Push(image);
 
             }
             catch (Exception)
             {
                 Close();
             }
-
         }
 
+        
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)
+            if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             && Keyboard.IsKeyDown(Key.C))
             { 
                 if(image != null)
@@ -81,6 +111,26 @@ namespace BorderlessGraphicViewer
             else if (Keyboard.IsKeyDown(Key.F3))
             {
                 Topmost = !Topmost;
+            }
+            else if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            && Keyboard.IsKeyDown(Key.Z))
+            {
+                // first time pressing ctrl+z after new pic
+                if(newPictureOnStack)
+                {
+                    imageStack.Pop();
+                    newPictureOnStack = false;
+                }
+                if(imageStack.Count > 1)
+                {
+                    image = imageStack.Pop();
+ 
+                }
+                else
+                {
+                    image = imageStack.Peek();
+                }
+                img.Source = image;
             }
         }
 
@@ -130,7 +180,6 @@ namespace BorderlessGraphicViewer
                     }
                     catch (Exception)
                     {
-                
                     }
                 }
 
@@ -153,7 +202,6 @@ namespace BorderlessGraphicViewer
                     image = newImage;
                     img.Source = image;
                 }
-
             }
         }
 
@@ -176,6 +224,12 @@ namespace BorderlessGraphicViewer
         private void img_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             lastMousePos = new System.Windows.Point(-1.0, -1.0);
+        }
+
+        private void img_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            imageStack.Push(image);
+            newPictureOnStack = true;
         }
     }
 }

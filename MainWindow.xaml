@@ -1,4 +1,4 @@
-﻿<Window x:Class="BorderlessGraphicViewer.MainWindow"
+﻿<Window x:Name="window" x:Class="BorderlessGraphicViewer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:BorderlessGraphicViewer"
         UseLayoutRounding="True"
         mc:Ignorable="d"
-        Title="Borderless Window Viewer (Ctrl+C / F5 / F3 Topmost)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded" Topmost="True">
-    <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen"/>
+        Title="Borderless Window Viewer (Right-Click / Ctrl+C / F5 / F3 Topmost)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded" Topmost="True">
+
+    <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp">
+        <Image.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>
+            </ContextMenu>
+        </Image.ContextMenu>
+    </Image>
 </Window>
