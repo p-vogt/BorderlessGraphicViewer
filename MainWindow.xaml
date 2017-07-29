@@ -12,6 +12,7 @@
         <Image.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>
+                <MenuItem Header="Open With Paint" Click="MenuItem_Click"/>
             </ContextMenu>
         </Image.ContextMenu>
     </Image>

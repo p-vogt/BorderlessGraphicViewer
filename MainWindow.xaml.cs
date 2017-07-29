@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -89,7 +91,6 @@ namespace BorderlessGraphicViewer
                 Close();
             }
         }
-
         
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -231,5 +232,34 @@ namespace BorderlessGraphicViewer
             imageStack.Push(image);
             newPictureOnStack = true;
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+
+            string tmpPicName = "temp.png";
+
+            using (var fileStream = new FileStream(tmpPicName, FileMode.Create))
+            {
+                encoder.Save(fileStream);
+            }
+
+            // start mspaint
+            Process p = new Process();
+            p.StartInfo.WorkingDirectory = "C:\\";
+            p.StartInfo.FileName = "mspaint";
+            p.StartInfo.Arguments = AppDomain.CurrentDomain.BaseDirectory + tmpPicName;
+            p.Start();
+            Thread.Sleep(1000);
+
+            // delete temp file
+            if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + tmpPicName))
+            {
+                File.Delete(AppDomain.CurrentDomain.BaseDirectory + tmpPicName);
+            }
+            
+        }
     }
+
 }
