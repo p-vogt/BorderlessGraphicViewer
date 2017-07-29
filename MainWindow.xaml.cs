@@ -239,8 +239,8 @@ namespace BorderlessGraphicViewer
             encoder.Frames.Add(BitmapFrame.Create(image));
 
             string tmpPicName = "temp.png";
-
-            using (var fileStream = new FileStream(tmpPicName, FileMode.Create))
+            string tmpFilePath = AppDomain.CurrentDomain.BaseDirectory + tmpPicName;
+            using (var fileStream = new FileStream(tmpFilePath, FileMode.Create))
             {
                 encoder.Save(fileStream);
             }
@@ -249,14 +249,14 @@ namespace BorderlessGraphicViewer
             Process p = new Process();
             p.StartInfo.WorkingDirectory = "C:\\";
             p.StartInfo.FileName = "mspaint";
-            p.StartInfo.Arguments = AppDomain.CurrentDomain.BaseDirectory + tmpPicName;
+            p.StartInfo.Arguments = tmpFilePath;
             p.Start();
             Thread.Sleep(1000);
 
             // delete temp file
-            if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + tmpPicName))
+            if(File.Exists(tmpFilePath))
             {
-                File.Delete(AppDomain.CurrentDomain.BaseDirectory + tmpPicName);
+                File.Delete(tmpFilePath);
             }
             
         }
