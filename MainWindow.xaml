@@ -11,8 +11,17 @@
     <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp">
         <Image.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>
-                <MenuItem Header="Open With Paint" Click="MenuItem_Click"/>
+                <!-- <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>-->
+                <MenuItem Header="Open With Paint" Click="MenuItem_Click">
+                    <MenuItem.Icon>
+                        <Image Source="Properties/MS-Paint-Icon.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save as png" Click="MenuItemPng_Click">
+                    <MenuItem.Icon>
+                        <Image Source="Properties/MS-Paint-Icon.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </ContextMenu>
         </Image.ContextMenu>
     </Image>

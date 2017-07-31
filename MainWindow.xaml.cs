@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -235,15 +236,10 @@ namespace BorderlessGraphicViewer
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            BitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(image));
-
             string tmpPicName = "temp.png";
+
             string tmpFilePath = AppDomain.CurrentDomain.BaseDirectory + tmpPicName;
-            using (var fileStream = new FileStream(tmpFilePath, FileMode.Create))
-            {
-                encoder.Save(fileStream);
-            }
+            SaveAsImageAsPng(tmpFilePath);
 
             // start mspaint
             Process p = new Process();
@@ -254,11 +250,40 @@ namespace BorderlessGraphicViewer
             Thread.Sleep(1000);
 
             // delete temp file
-            if(File.Exists(tmpFilePath))
+            if (File.Exists(tmpFilePath))
             {
                 File.Delete(tmpFilePath);
             }
-            
+
+        }
+
+        private void SaveAsImageAsPng(string tmpFilePath)
+        {
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(image));
+
+            using (var fileStream = new FileStream(tmpFilePath, FileMode.Create))
+            {
+                encoder.Save(fileStream);
+            }
+        }
+
+        private void MenuItemPng_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.FileName = "screen_" + DateTime.Now.ToString("yyMMddHHmm"); // Default file name
+            dlg.DefaultExt = ".png"; // Default file extension
+            dlg.Filter = "Portable Network Graphics (.png)|*.png"; // Filter files by extension
+
+            // Show save file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document
+                this.SaveAsImageAsPng(dlg.FileName);
+            }
         }
     }
 
