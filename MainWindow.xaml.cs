@@ -21,54 +21,33 @@ using System.Windows.Threading;
 
 namespace BorderlessGraphicViewer
 {
-    public class CopyCommand : ICommand
-    {
-        BitmapImage image;
-        event EventHandler ICommand.CanExecuteChanged
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        bool ICommand.CanExecute(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        void ICommand.Execute(object parameter)
-        {
-            if (image != null)
-            {
-                Clipboard.SetImage(image);
-            }
-        }
-    }
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        bool newPictureOnStack = false;
-        Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
+        private bool newPictureOnStack = false;
+        private Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
 
-        public CopyCommand copyCommand = new CopyCommand();
-        BitmapImage image;
+        private BitmapImage image;
         //initial image (without drawings)
-        BitmapImage imageInit;
+        private BitmapImage imageInit;
         public MainWindow(string[] args)
         {
             InitializeComponent();
             string filename = "";
-            if (args.Length != 0)
+            if (args.Length > 0)
             {
                 filename = args[0];
+
+                if(args.Length == 1)
+                {
+                    // - send "ack" to Greenshot / calling program by closing this (return code)
+                    // - starting a mirrored session 
+                    string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+                    Process.Start(path, filename + " -internalCall");
+                    Close();
+                }
             }
             else
             {
@@ -76,11 +55,13 @@ namespace BorderlessGraphicViewer
                 string appDirPath = System.Reflection.Assembly.GetEntryAssembly().Location;
                 string projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
                 filename = projectPath + @"\debug.png";
+#else   
+                MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nNo file specified (app argument)!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
 #endif
             }
             try
             {
-     
                 imageInit = new BitmapImage(new Uri(@filename, UriKind.Absolute));
                 image = imageInit;
                 img.Source = imageInit;
@@ -89,10 +70,11 @@ namespace BorderlessGraphicViewer
             }
             catch (Exception)
             {
+                MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nError loading the image!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }
         }
-        
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -284,7 +266,7 @@ namespace BorderlessGraphicViewer
                 // Save document
                 this.SaveAsImageAsPng(dlg.FileName);
             }
-        }
+        }        
     }
 
 }
