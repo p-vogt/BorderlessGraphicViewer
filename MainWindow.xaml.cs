@@ -4,20 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace BorderlessGraphicViewer
 {
@@ -26,6 +17,7 @@ namespace BorderlessGraphicViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string INTERNAL_CALL_FLAG = "-internalCall";
         private bool newPictureOnStack = false;
         private Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
 
@@ -38,15 +30,16 @@ namespace BorderlessGraphicViewer
             string filename = "";
             if (args.Length > 0)
             {
+                List<string> argList = new List<string>(args);
                 filename = args[0];
-
-                if(args.Length == 1)
+                if (args.Length == 1 && !argList.Contains(INTERNAL_CALL_FLAG)) // prevent endless loop
                 {
-                    // - send "ack" to Greenshot / calling program by closing this (return code)
-                    // - starting a mirrored session 
+                    // 1.) start a mirrored session 
                     string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-                    Process.Start(path, filename + " -internalCall");
+                    Process.Start(path, filename + " " + INTERNAL_CALL_FLAG);
+                    // 2.) send "ack" to Greenshot / calling program by closing this exe (return code)
                     Close();
+                    return;
                 }
             }
             else
@@ -58,7 +51,8 @@ namespace BorderlessGraphicViewer
 #else   
                 MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nNo file specified (app argument)!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
-#endif
+                return;
+#endif          
             }
             try
             {
@@ -72,6 +66,7 @@ namespace BorderlessGraphicViewer
             {
                 MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nError loading the image!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
+                return;
             }
         }
 
