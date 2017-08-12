@@ -8,11 +8,11 @@
         mc:Ignorable="d"
         Title="Borderless Window Viewer (Right-Click / Ctrl+C / F5 / F3 Topmost)" Height="350" Width="525" Icon="Properties/viewer_image.ico" KeyDown="Window_KeyDown" Loaded="Window_Loaded" Topmost="True">
 
-    <Image x:Name="img" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp">
+    <Image x:Name="img" ContextMenuService.IsEnabled="False" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp">
         <Image.ContextMenu>
             <ContextMenu>
                 <!-- <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>-->
-                <MenuItem Header="Open With Paint" Click="MenuItem_Click">
+                <MenuItem Header="Open With Paint" Click="MenuItemOpenWithPaint_Click">
                     <MenuItem.Icon>
                         <Image Source="Properties/MS-Paint-Icon.png"/>
                     </MenuItem.Icon>
