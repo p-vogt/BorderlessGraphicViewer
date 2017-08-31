@@ -263,7 +263,7 @@ namespace BorderlessGraphicViewer
             Process p = new Process();
             p.StartInfo.WorkingDirectory = "C:\\";
             p.StartInfo.FileName = "mspaint";
-            p.StartInfo.Arguments = tmpFilePath;
+            p.StartInfo.Arguments = "\"" + tmpFilePath + "\"";
             p.Start();
             Thread.Sleep(1000);
 
