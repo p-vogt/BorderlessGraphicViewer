@@ -1,7 +1,7 @@
 # BorderlessGraphicViewer
 Used to display an image without a border. Pass the path to the image as a parameter.
 
-*Usage with Greenshot:*
+**Usage with Greenshot:**
 
 Right click tray icon -> Configure external commands -> new:
 
