@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -25,6 +26,9 @@ namespace BorderlessGraphicViewer
         private BitmapImage image;
         //initial image (without drawings)
         private BitmapImage imageInit;
+
+        private double heightToWidthRatio;
+
         public MainWindow(string[] args)
         {
             InitializeComponent();
@@ -61,7 +65,6 @@ namespace BorderlessGraphicViewer
                 image = imageInit;
                 img.Source = imageInit;
                 imageStack.Push(image);
-
             }
             catch (Exception)
             {
@@ -122,6 +125,7 @@ namespace BorderlessGraphicViewer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             FitWindowSize();
+            heightToWidthRatio = Height / Width;
         }
 
         private void FitWindowSize()
@@ -235,6 +239,7 @@ namespace BorderlessGraphicViewer
         }
 
         private bool __ignoreOneMouseUp; // see @ usage
+
         private void img_MouseUp(object sender, MouseButtonEventArgs e)
         {
             imageStack.Push(image);
@@ -300,9 +305,16 @@ namespace BorderlessGraphicViewer
             if (result == true)
             {
                 // Save document
-                this.SaveAsImageAsPng(dlg.FileName);
+                SaveAsImageAsPng(dlg.FileName);
+            }
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                Height = heightToWidthRatio * Width;
             }
         }
     }
-
 }
