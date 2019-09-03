@@ -203,23 +203,35 @@ namespace BorderlessGraphicViewer
             }
         }
 
-        private Bitmap ConvertToBitmap(BitmapSource target)
+        private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
-            Bitmap bitmap;
+            // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
+
             using (MemoryStream outStream = new MemoryStream())
             {
                 BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(target));
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
                 enc.Save(outStream);
-                bitmap = new Bitmap(outStream);
-            }
+                Bitmap bitmap = new Bitmap(outStream);
 
-            return bitmap;
+                return new Bitmap(bitmap);
+            }
         }
 
         private void img_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.RightButton == MouseButtonState.Pressed)
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                var pos = e.GetPosition(sender as IInputElement);
+                BitmapImage bmpImage = img.Source as BitmapImage;
+                Bitmap bmp = BitmapImage2Bitmap(bmpImage);
+                var color = bmp.GetPixel((int)pos.X, (int)pos.Y);
+
+                ColorWindow win = new ColorWindow(color);
+                win.ShowDialog();
+
+            }
+            else if (e.RightButton == MouseButtonState.Pressed)
             {
                 if (isCurrentlyDrawing)
                 {
