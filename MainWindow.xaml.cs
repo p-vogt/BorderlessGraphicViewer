@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -27,7 +26,7 @@ namespace BorderlessGraphicViewer
         //initial image (without drawings)
         private BitmapImage imageInit;
 
-        private double heightToWidthRatio;
+        private double HeightToWidthRatio => img.Source.Height / img.Source.Width;
 
         public MainWindow(string[] args)
         {
@@ -125,16 +124,45 @@ namespace BorderlessGraphicViewer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             FitWindowSize();
-            heightToWidthRatio = Height / Width;
         }
 
         private void FitWindowSize()
         {
-            double heightDifference = Height - img.ActualHeight;
-            double widthDifference = Width - img.ActualWidth;
+            int minWidth = 120;
+            int minHeight = 120;
 
-            Height = image.Height + heightDifference;
-            Width = image.Width + widthDifference;
+            double height = img.Source.Height;
+            double width = img.Source.Width;
+
+            if (width >= minWidth && height >= minHeight)
+            {
+                height = minWidth;
+                width = minHeight;
+            }
+            else if (width < minWidth || height < minHeight)
+            {
+                if (height > width)
+                {
+                    // HeightToWidthRatio > 0
+                    width = minWidth;
+                    height = HeightToWidthRatio * width;
+                }
+                else
+                {
+                    // HeightToWidthRatio < 0
+                    height = minHeight;
+                    width = height / HeightToWidthRatio;
+                }
+            }
+            if (width < minWidth || height < minHeight)
+            {
+                MessageBox.Show($"{width} {height} {HeightToWidthRatio}");
+            }
+
+            Width = width;
+            Height = height;
+            MinWidth = minWidth;
+            MinHeight = minHeight;
         }
 
         System.Windows.Point lastMousePos = new System.Windows.Point(-1.0, -1.0);
@@ -325,7 +353,7 @@ namespace BorderlessGraphicViewer
         {
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                Height = heightToWidthRatio * Width;
+                Height = HeightToWidthRatio * Width;
             }
         }
     }
