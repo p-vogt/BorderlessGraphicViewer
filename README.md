@@ -12,6 +12,10 @@ Keeps the window topmost by default. Avoids having to switch windows/tabs often.
 - **Right mouse button:** Opens the context menu
 	- Open with Paint
 	- Save as PNG
+- **Middle mouse button:** Opens the color picker with the selected color preselected
+	- Copy the hex value to the clipboard
+	- Copy the rgb value to the clipboard
+	- Copy the rgba value to the clipboard
 - Resize with **shift** to keep the original aspect ratio
 
 ## Usage with Greenshot
