@@ -134,7 +134,7 @@ namespace BorderlessGraphicViewer
             double height = img.Source.Height;
             double width = img.Source.Width;
 
-            if (width >= minWidth && height >= minHeight)
+            if (width < minWidth && height < minHeight)
             {
                 height = minWidth;
                 width = minHeight;
@@ -253,7 +253,9 @@ namespace BorderlessGraphicViewer
                 var pos = e.GetPosition(sender as IInputElement);
                 BitmapImage bmpImage = img.Source as BitmapImage;
                 Bitmap bmp = BitmapImage2Bitmap(bmpImage);
-                var color = bmp.GetPixel((int)pos.X, (int)pos.Y);
+                int x = (int)(pos.X / img.ActualWidth * bmp.Width);
+                int y = (int)(pos.Y / img.ActualHeight * bmp.Height);
+                var color = bmp.GetPixel(x, y);
 
                 ColorWindow win = new ColorWindow(color);
                 win.ShowDialog();
