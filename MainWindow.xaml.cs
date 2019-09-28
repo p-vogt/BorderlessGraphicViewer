@@ -134,12 +134,7 @@ namespace BorderlessGraphicViewer
             double height = img.Source.Height;
             double width = img.Source.Width;
 
-            if (width >= minWidth && height >= minHeight)
-            {
-                height = minWidth;
-                width = minHeight;
-            }
-            else if (width < minWidth || height < minHeight)
+            if (width < minWidth || height < minHeight)
             {
                 if (height > width)
                 {
@@ -191,9 +186,11 @@ namespace BorderlessGraphicViewer
                 {
                     var converter = new BrushConverter();
                     var brush = (System.Windows.Media.Brush)converter.ConvertFromString("#FF0000");
-                    var pen = new System.Windows.Media.Pen();
-                    pen.Brush = brush;
-                    pen.Thickness = 2;
+                    var pen = new System.Windows.Media.Pen
+                    {
+                        Brush = brush,
+                        Thickness = 2
+                    };
 
                     System.Windows.Point newMousePos = Mouse.GetPosition(this);
 
