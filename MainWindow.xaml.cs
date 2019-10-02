@@ -252,14 +252,15 @@ namespace BorderlessGraphicViewer
             {
                 var pos = e.GetPosition(sender as IInputElement);
                 BitmapImage bmpImage = img.Source as BitmapImage;
-                Bitmap bmp = BitmapImage2Bitmap(bmpImage);
-                int x = (int)(pos.X / img.ActualWidth * bmp.Width);
-                int y = (int)(pos.Y / img.ActualHeight * bmp.Height);
-                var color = bmp.GetPixel(x, y);
 
-                ColorWindow win = new ColorWindow(color);
-                win.ShowDialog();
-
+                using (Bitmap bmp = BitmapImage2Bitmap(bmpImage))
+                {
+                    int x = (int)(pos.X / img.ActualWidth * bmp.Width);
+                    int y = (int)(pos.Y / img.ActualHeight * bmp.Height);
+                    var color = bmp.GetPixel(x, y);
+                    ColorWindow win = new ColorWindow(color);
+                    win.ShowDialog();
+                }
             }
             else if (e.RightButton == MouseButtonState.Pressed)
             {
