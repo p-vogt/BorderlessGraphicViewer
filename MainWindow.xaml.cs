@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
+using Drawing = System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -51,7 +52,7 @@ namespace BorderlessGraphicViewer
 #if DEBUG
                 string appDirPath = System.Reflection.Assembly.GetEntryAssembly().Location;
                 string projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
-                filename = projectPath + @"\debug.png";
+                filename = projectPath + @"\debug_10to1.png";
 #else   
                 MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nNo file specified (app argument)!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
@@ -125,13 +126,13 @@ namespace BorderlessGraphicViewer
         {
             FitWindowSize();
         }
-
         private void FitWindowSize()
         {
-            int minWidth = 120;
-            int minHeight = 120;
+            double menuHeight = 0;
+            double minWidth = 120;
+            double minHeight = menuHeight;
 
-            double height = img.Source.Height;
+            double height = img.Source.Height + menuHeight;
             double width = img.Source.Width;
 
             if (width < minWidth || height < minHeight)
@@ -140,7 +141,7 @@ namespace BorderlessGraphicViewer
                 {
                     // HeightToWidthRatio > 0
                     width = minWidth;
-                    height = HeightToWidthRatio * width;
+                    height = HeightToWidthRatio * window.Width;
                 }
                 else
                 {
@@ -154,13 +155,15 @@ namespace BorderlessGraphicViewer
                 MessageBox.Show($"{width} {height} {HeightToWidthRatio}");
             }
 
+            img.Width = width;
+            img.Height = height;
             Width = width;
-            Height = height;
+            Height = height + GetTotalBorderHeight();
+            SetMinWindowHeight(width);
             MinWidth = minWidth;
-            MinHeight = minHeight;
         }
 
-        System.Windows.Point lastMousePos = new System.Windows.Point(-1.0, -1.0);
+        Point lastMousePos = new Point(-1.0, -1.0);
         private void img_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -169,7 +172,6 @@ namespace BorderlessGraphicViewer
                 {
                     DrawWithMouseOnImage();
                 }
-
             }
         }
 
@@ -185,20 +187,32 @@ namespace BorderlessGraphicViewer
                 try
                 {
                     var converter = new BrushConverter();
-                    var brush = (System.Windows.Media.Brush)converter.ConvertFromString("#FF0000");
-                    var pen = new System.Windows.Media.Pen
+                    var brush = (Brush)converter.ConvertFromString("#FF0000");
+                    var pen = new Pen
                     {
                         Brush = brush,
                         Thickness = 2
                     };
 
-                    System.Windows.Point newMousePos = Mouse.GetPosition(this);
+                    Point newMousePos = Mouse.GetPosition(this);
 
                     dc.DrawImage(image, new Rect(0, 0, image.PixelWidth, image.PixelHeight));
 
-                    System.Windows.Point relativeP1 = new System.Windows.Point(image.Width * (lastMousePos.X / img.ActualWidth), (image.Height * lastMousePos.Y / img.ActualHeight));
-                    System.Windows.Point relativeP2 = new System.Windows.Point(image.Width * (newMousePos.X / img.ActualWidth), (image.Height * newMousePos.Y / img.ActualHeight));
-                    dc.DrawLine(pen, relativeP1, relativeP2);
+                    var posTopLeftOfImage = img.TransformToAncestor(this)
+                              .Transform(new Point(0, 0));
+
+                    double xOffsetImage = posTopLeftOfImage.X;
+                    double yOffsetImage = posTopLeftOfImage.Y;
+
+                    double x1 = image.Width * ((lastMousePos.X - posTopLeftOfImage.X) / img.ActualWidth);
+                    double y1 = image.Height * ((lastMousePos.Y - yOffsetImage) / img.ActualHeight);
+
+                    double x2 = image.Width * ((newMousePos.X - posTopLeftOfImage.X) / img.ActualWidth);
+                    double y2 = image.Height * ((newMousePos.Y - yOffsetImage) / img.ActualHeight);
+
+                    Point p1 = new Point(x1, y1);
+                    Point p2 = new Point(x2, y2);
+                    dc.DrawLine(pen, p1, p2);
 
                     lastMousePos = newMousePos;
                 }
@@ -206,8 +220,8 @@ namespace BorderlessGraphicViewer
                 {
                 }
             }
-
-            var rtb = new RenderTargetBitmap(image.PixelWidth, image.PixelHeight, 96, 96, PixelFormats.Pbgra32);
+            int dpi = 96;
+            var rtb = new RenderTargetBitmap(image.PixelWidth, image.PixelHeight, dpi, dpi, PixelFormats.Pbgra32);
             rtb.Render(dv);
 
             var bitmapEncoder = new PngBitmapEncoder();
@@ -228,18 +242,16 @@ namespace BorderlessGraphicViewer
             }
         }
 
-        private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
+        private Drawing.Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
-            // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
-
             using (MemoryStream outStream = new MemoryStream())
             {
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(bitmapImage));
                 enc.Save(outStream);
-                Bitmap bitmap = new Bitmap(outStream);
+                Drawing.Bitmap bitmap = new Drawing.Bitmap(outStream);
 
-                return new Bitmap(bitmap);
+                return new Drawing.Bitmap(bitmap);
             }
         }
 
@@ -249,7 +261,7 @@ namespace BorderlessGraphicViewer
             {
                 var pos = e.GetPosition(sender as IInputElement);
                 BitmapImage bmpImage = img.Source as BitmapImage;
-                using (Bitmap bmp = BitmapImage2Bitmap(bmpImage))
+                using (Drawing.Bitmap bmp = BitmapImage2Bitmap(bmpImage))
                 {
                     var color = bmp.GetPixel((int)pos.X, (int)pos.Y);
                     ColorWindow win = new ColorWindow(color);
@@ -271,7 +283,7 @@ namespace BorderlessGraphicViewer
             {
                 isDrawingCanceled = false;
                 isCurrentlyDrawing = true;
-                lastMousePos = new System.Windows.Point(-1.0, -1.0);
+                lastMousePos = new Point(-1.0, -1.0);
             }
         }
 
@@ -336,10 +348,10 @@ namespace BorderlessGraphicViewer
             dlg.Filter = "Portable Network Graphics (.png)|*.png"; // Filter files by extension
 
             // Show save file dialog box
-            bool? result = dlg.ShowDialog();
+            bool hasUserPressedYes = dlg.ShowDialog() == true;
 
             // Process save file dialog box results
-            if (result == true)
+            if (hasUserPressedYes)
             {
                 // Save document
                 SaveAsImageAsPng(dlg.FileName);
@@ -348,10 +360,31 @@ namespace BorderlessGraphicViewer
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            img.Height = double.NaN;
+            img.Width = double.NaN;
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                Height = HeightToWidthRatio * Width;
+                img.Height = HeightToWidthRatio * Width;
+                SetMinWindowHeight(Width);
             }
+        }
+
+        private void SetMinWindowHeight(double imgWidth)
+        {
+            double totalBorderHeight = GetTotalBorderHeight();
+            double height = imgWidth * HeightToWidthRatio;
+            MinHeight = height + totalBorderHeight;
+        }
+
+        private static double GetTotalBorderHeight()
+        {
+            var captionHeight = SystemParameters.WindowCaptionHeight
+                                + SystemParameters.ResizeFrameHorizontalBorderHeight;
+            var verticalBorderWidth = SystemParameters.ResizeFrameVerticalBorderWidth;
+            var bottomBorderHeight = SystemParameters.WindowNonClientFrameThickness.Bottom
+                + SystemParameters.ResizeFrameVerticalBorderWidth;
+            double totalBorderHeight = captionHeight + verticalBorderWidth + bottomBorderHeight;
+            return totalBorderHeight;
         }
     }
 }
