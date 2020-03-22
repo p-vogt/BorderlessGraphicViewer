@@ -130,7 +130,7 @@ namespace BorderlessGraphicViewer
         {
             double menuHeight = 0;
             double minWidth = 120;
-            double minHeight = menuHeight;
+            double minHeight = minWidth;
 
             double height = img.Source.Height + menuHeight;
             double width = img.Source.Width;
@@ -141,7 +141,7 @@ namespace BorderlessGraphicViewer
                 {
                     // HeightToWidthRatio > 0
                     width = minWidth;
-                    height = HeightToWidthRatio * window.Width;
+                    height = width * HeightToWidthRatio;
                 }
                 else
                 {
@@ -150,10 +150,10 @@ namespace BorderlessGraphicViewer
                     width = height / HeightToWidthRatio;
                 }
             }
-            if (width < minWidth || height < minHeight)
-            {
-                MessageBox.Show($"{width} {height} {HeightToWidthRatio}");
-            }
+            //if (width < minWidth || height < minHeight)
+            //{
+            //    MessageBox.Show($"{width} {height} {HeightToWidthRatio}");
+            //}
 
             img.Width = width;
             img.Height = height;
@@ -366,6 +366,10 @@ namespace BorderlessGraphicViewer
             {
                 img.Height = HeightToWidthRatio * Width;
                 SetMinWindowHeight(Width);
+            }
+            else
+            {
+                MinHeight = 0;
             }
         }
 
