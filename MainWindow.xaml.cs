@@ -10,6 +10,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using static BorderlessGraphicViewer.MouseHook;
 
 namespace BorderlessGraphicViewer
 {
@@ -33,6 +36,7 @@ namespace BorderlessGraphicViewer
         {
             InitializeComponent();
             string filename = "";
+            MouseHook.OnMouseUp += MouseHookMouseUp;
             if (args.Length > 0)
             {
                 List<string> argList = new List<string>(args);
@@ -71,6 +75,19 @@ namespace BorderlessGraphicViewer
                 MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nError loading the image!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
                 return;
+            }
+        }
+
+        private void MouseHookMouseUp(object sender, MouseState state)
+        {
+            if (state.IsRightButtonReleased)
+            {
+                image = imageStack.Peek();
+                img.Source = image;
+            }
+            else if (isCurrentlyDrawing)
+            {
+                AddImageToStack();
             }
         }
 
@@ -289,25 +306,10 @@ namespace BorderlessGraphicViewer
 
         private bool __ignoreOneMouseUp; // see @ usage
 
-        private void img_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            AddImageToStack();
-        }
-
         private void AddImageToStack()
         {
             imageStack.Push(image);
             isNewPictureOnStack = true;
-            if (isDrawingCanceled)
-            {
-                // little hack to prevent 2 img to be removed from the stack when releasing left and right button
-                // this event gets called twice...
-                __ignoreOneMouseUp = !__ignoreOneMouseUp;
-                if (__ignoreOneMouseUp)
-                {
-                    UndoDrawing();
-                }
-            }
             isCurrentlyDrawing = false;
         }
 
@@ -394,14 +396,6 @@ namespace BorderlessGraphicViewer
                 + SystemParameters.ResizeFrameVerticalBorderWidth;
             double totalBorderHeight = captionHeight + verticalBorderWidth + bottomBorderHeight;
             return totalBorderHeight;
-        }
-
-        private void img_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if(isCurrentlyDrawing)
-            {
-                AddImageToStack();
-            }
         }
     }
 }
