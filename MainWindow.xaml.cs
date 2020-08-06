@@ -26,8 +26,7 @@ namespace BorderlessGraphicViewer
         private bool isDrawingCanceled;
         private bool isCurrentlyDrawing;
         private BitmapImage image;
-        //initial image (without drawings)
-        private BitmapImage imageInit;
+        private BitmapImage imageWithoutDrawings;
 
         private double HeightToWidthRatio => img.Source.Height / img.Source.Width;
         private Point lastMousePos = ResetPosition;
@@ -35,17 +34,17 @@ namespace BorderlessGraphicViewer
         public MainWindow(string[] args)
         {
             InitializeComponent();
-            string filename = "";
+            string filePath = "";
             MouseHook.OnMouseUp += MouseHookMouseUp;
             if (args.Length > 0)
             {
                 List<string> argList = new List<string>(args);
-                filename = args[0];
+                filePath = args[0];
                 if (args.Length == 1 && !argList.Contains(INTERNAL_CALL_FLAG)) // prevent endless loop
                 {
                     // 1.) start a mirrored session 
                     string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-                    Process.Start(path, filename + " " + INTERNAL_CALL_FLAG);
+                    Process.Start(path, $"{filePath} {INTERNAL_CALL_FLAG}");
                     // 2.) send "ack" to Greenshot / calling program by closing this exe (return code)
                     Close();
                     return;
@@ -56,26 +55,35 @@ namespace BorderlessGraphicViewer
 #if DEBUG
                 string appDirPath = System.Reflection.Assembly.GetEntryAssembly().Location;
                 string projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
-                filename = projectPath + @"\debug_10to1.png";
+                filePath = projectPath + @"\debug_10to1.png";
 #else   
-                MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nNo file specified (app argument)!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{AppDomain.CurrentDomain.FriendlyName}:\nNo file specified (app argument)!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
                 return;
 #endif          
             }
             try
             {
-                imageInit = new BitmapImage(new Uri(@filename, UriKind.Absolute));
-                image = imageInit;
-                img.Source = imageInit;
-                imageStack.Push(image);
+                if (File.Exists(filePath))
+                {
+                    var fileUri = new Uri(filePath, UriKind.Absolute);
+                    imageWithoutDrawings = new BitmapImage(fileUri);
+                }
+                else
+                {
+                    MessageBox.Show($"{AppDomain.CurrentDomain.FriendlyName} :\nImage does not exist: {filePath}!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Close();
+                }
             }
             catch (Exception)
             {
-                MessageBox.Show(AppDomain.CurrentDomain.FriendlyName + ":\nError loading the image!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{AppDomain.CurrentDomain.FriendlyName}:\nError loading the image!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
                 return;
             }
+            image = imageWithoutDrawings;
+            img.Source = imageWithoutDrawings;
+            imageStack.Push(image);
         }
 
         private void MouseHookMouseUp(object sender, MouseState state)
@@ -103,9 +111,8 @@ namespace BorderlessGraphicViewer
             }
             else if (Keyboard.IsKeyDown(Key.F5))
             {
-                image = imageInit;
-                img.Source = imageInit;
-
+                image = imageWithoutDrawings;
+                img.Source = imageWithoutDrawings;
                 FitWindowSize();
             }
             else if (Keyboard.IsKeyDown(Key.F3))
@@ -130,7 +137,6 @@ namespace BorderlessGraphicViewer
             if (imageStack.Count > 1)
             {
                 image = imageStack.Pop();
-
             }
             else
             {
@@ -324,7 +330,7 @@ namespace BorderlessGraphicViewer
             Process p = new Process();
             p.StartInfo.WorkingDirectory = "C:\\";
             p.StartInfo.FileName = "mspaint";
-            p.StartInfo.Arguments = "\"" + tmpFilePath + "\"";
+            p.StartInfo.Arguments = $"\"{tmpFilePath}\"";
             p.Start();
             Thread.Sleep(1000);
 
