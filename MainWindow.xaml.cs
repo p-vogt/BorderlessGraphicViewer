@@ -7,11 +7,8 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 using static BorderlessGraphicViewer.MouseHook;
 
 namespace BorderlessGraphicViewer
@@ -22,6 +19,8 @@ namespace BorderlessGraphicViewer
     public partial class MainWindow : Window
     {
         private const string INTERNAL_CALL_FLAG = "-internalCall";
+        private static readonly Point ResetPosition = new Point(double.MinValue, double.MinValue);
+
         private bool isNewPictureOnStack = false;
         private Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
         private bool isDrawingCanceled;
@@ -31,6 +30,7 @@ namespace BorderlessGraphicViewer
         private BitmapImage imageInit;
 
         private double HeightToWidthRatio => img.Source.Height / img.Source.Width;
+        private Point lastMousePos = ResetPosition;
 
         public MainWindow(string[] args)
         {
@@ -180,7 +180,7 @@ namespace BorderlessGraphicViewer
             MinWidth = minWidth;
         }
 
-        Point lastMousePos = new Point(-1.0, -1.0);
+
         private void img_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -194,12 +194,12 @@ namespace BorderlessGraphicViewer
 
         private void DrawWithMouseOnImage()
         {
-            if (lastMousePos.X == -1.0)
+            if (lastMousePos == ResetPosition)
             {
                 lastMousePos = Mouse.GetPosition(this);
             }
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
+            var dv = new DrawingVisual();
+            using (var dc = dv.RenderOpen())
             {
                 try
                 {
@@ -294,17 +294,17 @@ namespace BorderlessGraphicViewer
                 if (e.LeftButton != MouseButtonState.Pressed)
                 {
                     img.ContextMenu.IsOpen = true;
+
+                    lastMousePos = ResetPosition;
                 }
             }
             else
             {
                 isDrawingCanceled = false;
                 isCurrentlyDrawing = true;
-                lastMousePos = new Point(-1.0, -1.0);
+                lastMousePos = ResetPosition;
             }
         }
-
-        private bool __ignoreOneMouseUp; // see @ usage
 
         private void AddImageToStack()
         {
