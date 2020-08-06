@@ -19,7 +19,7 @@ namespace BorderlessGraphicViewer
     public partial class MainWindow : Window
     {
         private const string INTERNAL_CALL_FLAG = "-internalCall";
-        private bool newPictureOnStack = false;
+        private bool isNewPictureOnStack = false;
         private Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
         private bool isDrawingCanceled;
         private bool isCurrentlyDrawing;
@@ -105,10 +105,10 @@ namespace BorderlessGraphicViewer
         private void UndoDrawing()
         {
             // first time pressing ctrl+z after new pic
-            if (newPictureOnStack)
+            if (isNewPictureOnStack)
             {
                 imageStack.Pop();
-                newPictureOnStack = false;
+                isNewPictureOnStack = false;
             }
             if (imageStack.Count > 1)
             {
@@ -260,7 +260,7 @@ namespace BorderlessGraphicViewer
             if (e.MiddleButton == MouseButtonState.Pressed)
             {
                 var pos = e.GetPosition(sender as IInputElement);
-                BitmapImage bmpImage = img.Source as BitmapImage;
+                var bmpImage = img.Source as BitmapImage;
                 using (Drawing.Bitmap bmp = BitmapImage2Bitmap(bmpImage))
                 {
                     var color = bmp.GetPixel((int)pos.X, (int)pos.Y);
@@ -291,8 +291,13 @@ namespace BorderlessGraphicViewer
 
         private void img_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            AddImageToStack();
+        }
+
+        private void AddImageToStack()
+        {
             imageStack.Push(image);
-            newPictureOnStack = true;
+            isNewPictureOnStack = true;
             if (isDrawingCanceled)
             {
                 // little hack to prevent 2 img to be removed from the stack when releasing left and right button
@@ -389,6 +394,14 @@ namespace BorderlessGraphicViewer
                 + SystemParameters.ResizeFrameVerticalBorderWidth;
             double totalBorderHeight = captionHeight + verticalBorderWidth + bottomBorderHeight;
             return totalBorderHeight;
+        }
+
+        private void img_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if(isCurrentlyDrawing)
+            {
+                AddImageToStack();
+            }
         }
     }
 }

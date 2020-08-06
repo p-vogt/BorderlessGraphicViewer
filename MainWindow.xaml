@@ -15,7 +15,7 @@
         Topmost="True" 
         SizeChanged="Window_SizeChanged"
     >
-    <Image x:Name="img" ContextMenuService.IsEnabled="False" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp">
+    <Image x:Name="img" ContextMenuService.IsEnabled="False" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen" MouseUp="img_MouseUp" MouseLeave="img_MouseLeave">
         <Image.ContextMenu>
             <ContextMenu>
                 <!-- <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>-->
