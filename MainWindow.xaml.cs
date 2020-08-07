@@ -14,6 +14,12 @@ namespace BorderlessGraphicViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+#if DEBUG
+        private bool isAppInDebugMode = true;
+#else
+  private bool isAppInDebugMode = false;
+#endif
+
         private const string INTERNAL_CALL_FLAG = "-internalCall";
         private ViewModel viewModel;
 
@@ -29,9 +35,10 @@ namespace BorderlessGraphicViewer
 
         private void ProcessArguments(string[] args)
         {
-#if DEBUG
-            args = HandleDebugArgs(args);
-#endif
+            if (isAppInDebugMode)
+            {
+                args = HandleDebugArgs(args);
+            }
 
             bool keepWindowOpen = true;
             string filePath = "";
@@ -39,7 +46,8 @@ namespace BorderlessGraphicViewer
             if (args.Length > 0)
             {
                 filePath = args[0];
-                if (args.Length == 1 && !args.Contains(INTERNAL_CALL_FLAG)) // prevent endless loop in case of no path
+                if (args.Length == 1 
+                    && !isAppInDebugMode)
                 {
                     StartMirroredSession(filePath);
                     // close window to send "ack" to Greenshot
@@ -69,7 +77,7 @@ namespace BorderlessGraphicViewer
             {
                 string appDirPath = Assembly.GetEntryAssembly().Location;
                 string projectPath = Directory.GetParent(appDirPath).Parent.Parent.FullName;
-                newArgs = new string[] {  $@"{projectPath}\debug_10to1.png" };
+                newArgs = new string[] { $@"{projectPath}\debug_10to1.png" };
             }
             return newArgs;
         }
