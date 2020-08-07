@@ -3,28 +3,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BorderlessGraphicViewer"
+        xmlns:local="clr-namespace:BorderlessGraphicViewer" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         UseLayoutRounding="True"
         mc:Ignorable="d"
         Title="Borderless Window Viewer (Right-Click / Middle-Click / Ctrl+C / F5 / F3 Topmost)" 
-        Height="350" 
-        Width="525" 
+        Height="{Binding Height}" 
+        Width="{Binding Width}" 
+        MinHeight="{Binding MinHeight}"
+        MinWidth="{Binding MinWidth}"
         Icon="Properties/viewer_image.ico" 
-        KeyDown="Window_KeyDown" 
-        Loaded="Window_Loaded" 
-        Topmost="True" 
-        SizeChanged="Window_SizeChanged"
+        DataContext="{StaticResource ViewModel}" Topmost="{Binding IsTopmost, Mode=OneWay}"
     >
-    <Image x:Name="img" ContextMenuService.IsEnabled="False" RenderOptions.BitmapScalingMode="Fant" MouseMove="img_MouseMove" PreviewMouseDown="img_PreviewMouseDown" Stretch="Fill" Cursor="Pen">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+            <cmd:EventToCommand Command="{Binding Path=KeyDownCommand, Mode=OneWay}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="SizeChanged">
+            <cmd:EventToCommand Command="{Binding Path=SizedChangedCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Image x:Name="img" Source="{Binding Image}" ContextMenuService.IsEnabled="False" RenderOptions.BitmapScalingMode="Fant" Stretch="Fill" Cursor="Pen">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                <cmd:EventToCommand Command="{Binding Path=StartDrawingCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+            <i:EventTrigger EventName="PreviewMouseMiddleButtonDown">
+                <cmd:EventToCommand Command="{Binding Path=OpenColorPickerCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+            <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                <cmd:EventToCommand Command="{Binding Path=ContextMenuCancelDrawingCommand, Mode=OneWay}"/>
+            </i:EventTrigger>
+            <i:EventTrigger EventName="MouseMove">
+                <cmd:EventToCommand Command="{Binding Path=DrawCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <Image.ContextMenu>
-            <ContextMenu>
+            <ContextMenu DataContext="{StaticResource ViewModel}">
                 <!-- <MenuItem Header="Copy" Command="{Binding CopyCommand, ElementName=window}"/>-->
-                <MenuItem Header="Open With Paint" Click="MenuItemOpenWithPaint_Click">
+                <MenuItem Header="Open With Paint" Command="{Binding OpenWithPaintCommand}">
                     <MenuItem.Icon>
                         <Image Source="Properties/MS-Paint-Icon.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Save as png" Click="MenuItemPng_Click">
+                <MenuItem Header="Save as png" Command="{Binding SaveAsPngCommand}">
                     <MenuItem.Icon>
                         <Image Source="Properties/MS-Paint-Icon.png"/>
                     </MenuItem.Icon>

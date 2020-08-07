@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:BorderlessGraphicViewer"
              Startup="App_Startup">
     <Application.Resources>
-         
+        <local:ViewModel x:Key="ViewModel" />
     </Application.Resources>
 </Application>
