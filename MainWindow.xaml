@@ -27,9 +27,9 @@
             <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
                 <cmd:EventToCommand Command="{Binding Path=StartDrawingCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
             </i:EventTrigger>
-            <i:EventTrigger EventName="PreviewMouseMiddleButtonDown">
+            <local:PreviewMouseMiddleButtonDown>
                 <cmd:EventToCommand Command="{Binding Path=OpenColorPickerCommand, Mode=OneWay}" PassEventArgsToCommand="True" />
-            </i:EventTrigger>
+            </local:PreviewMouseMiddleButtonDown>
             <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                 <cmd:EventToCommand Command="{Binding Path=ContextMenuCancelDrawingCommand, Mode=OneWay}"/>
             </i:EventTrigger>
