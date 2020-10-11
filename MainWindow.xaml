@@ -7,12 +7,13 @@
         UseLayoutRounding="True"
         mc:Ignorable="d"
         Title="Borderless Window Viewer (Right-Click / Middle-Click / Ctrl+C / F5 / F3 Topmost)" 
-        Height="{Binding Height}" 
-        Width="{Binding Width}" 
-        MinHeight="{Binding MinHeight}"
-        MinWidth="{Binding MinWidth}"
+        Height="{Binding Height, Mode=TwoWay}" 
+        Width="{Binding Width, Mode=TwoWay}" 
+        MinHeight="{Binding MinHeight, Mode=TwoWay}"
+        MinWidth="{Binding MinWidth, Mode=TwoWay}"
+        WindowState="{Binding WindowState, Mode=TwoWay}"
         Icon="Properties/viewer_image.ico" 
-        DataContext="{StaticResource ViewModel}" Topmost="{Binding IsTopmost, Mode=OneWay}"
+        DataContext="{StaticResource ViewModel}" Topmost="{Binding IsTopmost, Mode=TwoWay}" SizeChanged="window_SizeChanged"
     >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="KeyDown">

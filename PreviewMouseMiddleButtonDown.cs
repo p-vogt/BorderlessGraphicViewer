@@ -13,9 +13,13 @@ namespace BorderlessGraphicViewer
 
         protected override void OnEvent(EventArgs eventArgs)
         {
-            var mbea = eventArgs as MouseButtonEventArgs;
-            if (mbea != null && mbea.ChangedButton == MouseButton.Middle)
-                base.OnEvent(eventArgs);
+            if (eventArgs is MouseButtonEventArgs mbea)
+            {
+                if (mbea.ChangedButton == MouseButton.Middle)
+                {
+                    base.OnEvent(eventArgs);
+                }
+            }
         }
     }
 }

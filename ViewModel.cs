@@ -56,7 +56,7 @@ namespace BorderlessGraphicViewer
 
         private bool isNewPictureOnStack = false;
 
-        private Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
+        private readonly Stack<BitmapImage> imageStack = new Stack<BitmapImage>();
         private bool isDrawingCanceled;
         private bool isCurrentlyDrawing;
 
@@ -89,7 +89,12 @@ namespace BorderlessGraphicViewer
             get => minHeight;
             set => SetField(ref minHeight, value);
         }
-
+        private WindowState windowState = WindowState.Minimized;
+        public WindowState WindowState
+        {
+            get => windowState;
+            set => SetField(ref windowState, value);
+        }
         private bool isTopmost = true;
         public bool IsTopmost
         {
@@ -111,6 +116,7 @@ namespace BorderlessGraphicViewer
                 Image = ImageWithoutDrawings;
                 imageStack.Push(Image);
                 FitWindowSize();
+                WindowState = WindowState.Normal;
             }
         }
 
@@ -131,6 +137,22 @@ namespace BorderlessGraphicViewer
                 Image = imageStack.Peek();
             }
         }
+        // Conversion code
+        internal static BitmapImage ToBitmapImage(BitmapSource bitmapSource)
+        {
+            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            MemoryStream memorystream = new MemoryStream();
+            BitmapImage tmpImage = new BitmapImage();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            encoder.Save(memorystream);
+
+            tmpImage.BeginInit();
+            tmpImage.StreamSource = new MemoryStream(memorystream.ToArray());
+            tmpImage.EndInit();
+
+            memorystream.Close();
+            return tmpImage;
+        }
         public bool LoadImage(string filePath)
         {
             bool success = false;
@@ -150,6 +172,18 @@ namespace BorderlessGraphicViewer
             catch (Exception)
             {
                 MessageBox.Show($"{AppDomain.CurrentDomain.FriendlyName}:\nError loading the image: {filePath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return success;
+        }
+
+        public bool LoadImageFromClipboard()
+        {
+            bool success = false;
+            if (Clipboard.ContainsImage())
+            {
+                var source = Clipboard.GetImage();
+                ImageWithoutDrawings = ToBitmapImage(source);
+                success = true;
             }
             return success;
         }
@@ -223,10 +257,12 @@ namespace BorderlessGraphicViewer
         });
         public ICommand SaveAsPngCommand => new RelayCommand(() =>
         {
-            var dlg = new SaveFileDialog();
-            dlg.FileName = "screen_" + DateTime.Now.ToString("yyMMddHHmm"); // Default file name
-            dlg.DefaultExt = ".png"; // Default file extension
-            dlg.Filter = "Portable Network Graphics (.png)|*.png"; // Filter files by extension
+            var dlg = new SaveFileDialog
+            {
+                FileName = "screen_" + DateTime.Now.ToString("yyMMddHHmm"), // Default file name
+                DefaultExt = ".png", // Default file extension
+                Filter = "Portable Network Graphics (.png)|*.png" // Filter files by extension
+            };
 
             // Show save file dialog box
             bool hasUserPressedYes = dlg.ShowDialog() == true;
@@ -241,12 +277,12 @@ namespace BorderlessGraphicViewer
         public ICommand OpenColorPickerCommand => new RelayCommand<MouseButtonEventArgs>((e) =>
         {
             var pos = e.GetPosition(windowImage);
-            var ratio =  Image.Height / windowImage.ActualHeight;
+            var ratio = Image.Height / windowImage.ActualHeight;
             using (Drawing.Bitmap bmp = BitmapImage2Bitmap(Image))
             {
                 int x = (int)(ratio * pos.X);
                 int y = (int)(ratio * pos.Y);
-                var color = bmp.GetPixel(x,y);
+                var color = bmp.GetPixel(x, y);
                 var win = new ColorWindow(color);
                 win.ShowDialog();
             }
@@ -266,6 +302,12 @@ namespace BorderlessGraphicViewer
             }
         });
         private void FitWindowSize()
+        {
+            // somehow needs to be called twice for exact sizing
+            _FitWindowSize();
+            _FitWindowSize();
+        }
+        private void _FitWindowSize()
         {
             double menuHeight = 0;
             double minWidth = 120;
