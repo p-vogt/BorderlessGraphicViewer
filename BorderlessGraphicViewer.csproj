@@ -107,6 +107,7 @@
     </ApplicationDefinition>
     <Compile Include="Model.cs" />
     <Compile Include="PreviewMouseMiddleButtonDown.cs" />
+    <Compile Include="Sketch.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="ColorWindow.xaml">
       <SubType>Designer</SubType>

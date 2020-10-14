@@ -13,7 +13,7 @@
         MinWidth="{Binding MinWidth, Mode=TwoWay}"
         WindowState="{Binding WindowState, Mode=TwoWay}"
         Icon="Properties/viewer_image.ico" 
-        DataContext="{StaticResource ViewModel}" Topmost="{Binding IsTopmost, Mode=TwoWay}" SizeChanged="window_SizeChanged"
+        DataContext="{StaticResource ViewModel}" Topmost="{Binding IsTopmost, Mode=TwoWay}" SizeChanged="Window_SizeChanged"
     >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="KeyDown">
