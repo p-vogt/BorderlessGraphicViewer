@@ -292,23 +292,26 @@ namespace BorderlessGraphicViewer
                 catch (Exception)
                 {
                     MessageBox.Show("Error", "An error occured. Please try again.", MessageBoxButton.OK, MessageBoxImage.Error);
-                   
+
                 }
-  
+
             }
         });
         public ICommand SizeChangedCommand => new RelayCommand<SizeChangedEventArgs>((e) =>
         {
-            windowImage.Height = double.NaN;
-            windowImage.Width = double.NaN;
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            if (windowImage != null)
             {
-                windowImage.Height = HeightToWidthRatio * Width;
-                SetMinWindowHeight(Width);
-            }
-            else
-            {
-                MinHeight = 0;
+                windowImage.Height = double.NaN;
+                windowImage.Width = double.NaN;
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    windowImage.Height = HeightToWidthRatio * Width;
+                    SetMinWindowHeight(Width);
+                }
+                else
+                {
+                    MinHeight = 0;
+                }
             }
         });
         private void FitWindowSize()

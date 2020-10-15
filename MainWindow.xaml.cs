@@ -90,7 +90,6 @@ namespace BorderlessGraphicViewer
             string path = Assembly.GetExecutingAssembly().CodeBase;
             Process.Start(path, $"{filePath} {INTERNAL_CALL_FLAG}");
         }
-
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             viewModel.SizeChangedCommand.Execute(e);

@@ -12,8 +12,8 @@ namespace BorderlessGraphicViewer
 {
     public class Sketch
     {
-        ViewModel viewModel;
-        MainWindow window;
+        readonly ViewModel viewModel;
+        readonly MainWindow window;
         public Sketch(ViewModel viewModel, MainWindow window)
         {
             this.viewModel = viewModel;
@@ -49,8 +49,8 @@ namespace BorderlessGraphicViewer
             return null;
         }
 
-        IntPtr screenClipWindowHandle = IntPtr.Zero;
-        private bool hadImageInClipboard => imageBefore != null;
+        private IntPtr screenClipWindowHandle = IntPtr.Zero;
+        private bool HadImageInClipboard => imageBefore != null;
         private byte[] imageBefore;
         private readonly System.Timers.Timer timeoutTimer = new System.Timers.Timer(20000);
         private byte[] BitmapSourceToArray(BitmapSource bitmapSource)
@@ -90,7 +90,7 @@ namespace BorderlessGraphicViewer
                 {
                     return;
                 }
-                else if (this.hadImageInClipboard)
+                else if (this.HadImageInClipboard)
                 {
                     var image = Clipboard.GetImage();
                     var isEqual = BitmapSourceToArray(image).SequenceEqual(imageBefore);
