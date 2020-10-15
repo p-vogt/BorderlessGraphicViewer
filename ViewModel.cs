@@ -277,14 +277,24 @@ namespace BorderlessGraphicViewer
         public ICommand OpenColorPickerCommand => new RelayCommand<MouseButtonEventArgs>((e) =>
         {
             var pos = e.GetPosition(windowImage);
-            var ratio = Image.Height / windowImage.ActualHeight;
+            var widthRatio = Image.Width / windowImage.ActualWidth;
+            var heightRatio = Image.Height / windowImage.ActualHeight;
             using (Drawing.Bitmap bmp = BitmapImage2Bitmap(Image))
             {
-                int x = (int)(ratio * pos.X);
-                int y = (int)(ratio * pos.Y);
-                var color = bmp.GetPixel(x, y);
-                var win = new ColorWindow(color);
-                win.ShowDialog();
+                int x = (int)(widthRatio * pos.X);
+                int y = (int)(heightRatio * pos.Y);
+                try
+                {
+                    var color = bmp.GetPixel(x, y);
+                    var win = new ColorWindow(color);
+                    win.ShowDialog();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Error", "An error occured. Please try again.", MessageBoxButton.OK, MessageBoxImage.Error);
+                   
+                }
+  
             }
         });
         public ICommand SizeChangedCommand => new RelayCommand<SizeChangedEventArgs>((e) =>
