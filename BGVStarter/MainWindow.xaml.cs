@@ -25,15 +25,16 @@ namespace BGVStarter
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TrayIcon notifyIcon;
+        private SimpleTrayIcon notifyIcon;
         public MainWindow()
         {
             InitializeComponent();
-            notifyIcon = new TrayIcon(this, true, Properties.Resources.viewer_image);
+            notifyIcon = new SimpleTrayIcon(this, true, Properties.Resources.viewer_image);
             notifyIcon.TrayText = "Bordlerless Graphic Viewer Starter";
             notifyIcon.Visible = true;
             WindowState = WindowState.Minimized;
             Visibility = Visibility.Hidden;
+            notifyIcon.ShowBalloonTip();
             StartWatching();
 
         }
