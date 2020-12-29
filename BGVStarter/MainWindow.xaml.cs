@@ -32,8 +32,6 @@ namespace BGVStarter
             notifyIcon = new TrayIcon(this, true, Properties.Resources.viewer_image);
             notifyIcon.TrayText = "Bordlerless Graphic Viewer Starter";
             notifyIcon.Visible = true;
-            notifyIcon.RemoveMenuItemAtTop(); // remove "show" entry
-            notifyIcon.CustomDoubleClickCallback = () => { }; // do not open the window
             WindowState = WindowState.Minimized;
             Visibility = Visibility.Hidden;
             StartWatching();
