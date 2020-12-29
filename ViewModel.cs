@@ -51,7 +51,7 @@ namespace BorderlessGraphicViewer
             };
         }
 
-        private double HeightToWidthRatio => windowImage.Source.Height / windowImage.Source.Width;
+        private double HeightToWidthRatio => (windowImage?.Source?.Height / windowImage?.Source?.Width) ?? 0.0;
         private static readonly Point ResetPosition = new Point(double.MinValue, double.MinValue);
 
         private bool isNewPictureOnStack = false;
@@ -273,6 +273,10 @@ namespace BorderlessGraphicViewer
                 // Save document
                 SaveAsImageAsPng(dlg.FileName);
             }
+        });
+        public ICommand CopyToClipboardCommand => new RelayCommand(() =>
+        {
+            Clipboard.SetImage(Image);
         });
         public ICommand OpenColorPickerCommand => new RelayCommand<MouseButtonEventArgs>((e) =>
         {

@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BGVStarter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="BGV Starter" Height="74.367" Width="213.951">
     <Grid>
-        
     </Grid>
 </Window>

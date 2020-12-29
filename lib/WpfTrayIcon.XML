@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WpfTrayIcon</name>
+    </assembly>
+    <members>
+        <member name="T:WpfTrayIcon.MenuItemClickedEventArgs">
+            <summary>
+            When clicking a context menu item.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.MenuItemClickedEventArgs.Index">
+            <summary>
+            Index of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.MenuItemClickedEventArgs.Text">
+            <summary>
+            Text of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.MenuItemClickedEventArgs.Tag">
+            <summary>
+            Tag of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.MenuItemClickedEventArgs.#ctor(System.Int32,System.String,System.Object)">
+            <summary>
+            Creates a new <see cref="T:WpfTrayIcon.MenuItemClickedEventArgs"/>
+            </summary>
+            <param name="index">Index of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.</param>
+            <param name="text">Text of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.</param>
+            <param name="tag">Tag of the clicked <see cref="T:System.Windows.Forms.MenuItem"/>.</param>
+        </member>
+        <member name="T:WpfTrayIcon.SimpleTrayIcon">
+            <summary>
+            Easy to use TrayIcon. Simply place an object of this class into a <see cref="T:System.Windows.Window"/>.
+            This class will handle all relevant operations corresponding showing and hiding the <see cref="T:System.Windows.Window"/> 
+            and the <see cref="T:WpfTrayIcon.TrayIcon"/>.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.SimpleTrayIcon.#ctor(System.Windows.Window,System.Boolean,System.Drawing.Icon)">
+            <summary>
+            Creates a new <see cref="T:WpfTrayIcon.SimpleTrayIcon"/>. 
+            </summary>
+            <param name="window">Corresponding <see cref="T:System.Windows.Window"/>.</param>
+            <param name="showBaloonTip">Should a balloon tip be shown on collapsing?</param>
+            <param name="icon">Icon of the <see cref="T:WpfTrayIcon.SimpleTrayIcon"/>.</param>
+        </member>
+        <member name="T:WpfTrayIcon.ToolTipIcon">
+            <summary>
+            The ToolTipIcon enumeration defines a small set of standardized icons that can be displayed as part of a ToolTip.<para/>
+            Reimplementation of <see cref="T:System.Windows.Forms.ToolTipIcon"/>, so that no reference is needed outside of this dll.
+            </summary>
+            <remarks>This is accomplished by setting the ToolTip.ToolTipIcon property of the ToolTip class to one of the following values.</remarks>
+        </member>
+        <member name="F:WpfTrayIcon.ToolTipIcon.None">
+            <summary>
+            Not a standard icon.
+            </summary>
+        </member>
+        <member name="F:WpfTrayIcon.ToolTipIcon.Info">
+            <summary>
+            An information icon.
+            </summary>
+        </member>
+        <member name="F:WpfTrayIcon.ToolTipIcon.Warning">
+            <summary>
+            A warning icon.
+            </summary>
+        </member>
+        <member name="F:WpfTrayIcon.ToolTipIcon.Error">
+            <summary>
+            An error icon.
+            </summary>
+        </member>
+        <member name="T:WpfTrayIcon.TrayIcon">
+            <summary>
+            Handles a TrayIcon.
+            </summary>
+        </member>
+        <member name="F:WpfTrayIcon.TrayIcon.menuItemClickHandler">
+            <summary>
+            Stores the delegates of each MenuItem.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.BalloonTipTime">
+            <summary>
+            The PREFERED Balloon tip show time. OS might ignore/alter the time!
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.BalloonTipText">
+            <summary>
+            Notification Text.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.BalloonTipTitle">
+            <summary>
+            Title of the tray notification.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.Tooltip">
+            <summary>
+            Tooltip of the tray icon.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.Visible">
+            <summary>
+            Sets the visibility of the tray icon.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.TrayText">
+            <summary>
+            Sets or gets the tooltip text of the tray icon.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.#ctor(System.Windows.Window,System.Boolean,System.Drawing.Icon)">
+            <summary>
+            Sets the visibility of the tray icon.
+            </summary>
+        </member>
+        <member name="T:WpfTrayIcon.TrayIcon.OnEvent">
+            <summary>
+            CallBack delegate, that's beeing called when an event fires.
+            </summary>
+            <param name="sender">Sender of the event.</param>
+            <param name="e">Event arguments.</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.AddMenuItem(System.String,System.Int32,WpfTrayIcon.TrayIcon.OnEvent)">
+            <summary>
+            Adds a MenuItem to the ContextMenu>
+            </summary>
+            <param name="text">Text of the MenuItem</param>
+            <param name="index">Desired Index of the MenuItem</param>
+            <param name="CallBack">CallBack method, that's beeing called when the MenuItem is clicked.</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.AddMenuItemAtTop(System.String,WpfTrayIcon.TrayIcon.OnEvent)">
+            <summary>
+            Insert a MenuItem at the top of the ContextMenu.
+            </summary>
+            <param name="text">Text of the item.</param>
+            <param name="CallBack">CallBack method, that's beeing called when the MenuItem is clicked.</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.AddMenuItemAtBottom(System.String,WpfTrayIcon.TrayIcon.OnEvent)">
+            <summary>
+            Insert a MenuItem at the bottom of the ContextMenu.
+            </summary>
+            <param name="text">Text of the item.</param>
+            <param name="CallBack">CallBack method, that's beeing called when the MenuItem is clicked.</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.RemoveMenuItem(System.Int32)">
+            <summary>
+            Removes a MenuItem from the ContextMenu at the specified index.
+            </summary>
+            <param name="index">Desired Index of the MenuItem</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.RemoveMenuItemAtTop">
+            <summary>
+            Removes the top MenuItem of the ContextMenu.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.RemoveMenuItemAtBottom">
+            <summary>
+            Removes the MenuItem at the bottom of the ContextMenu.
+            </summary>
+        </member>
+        <member name="P:WpfTrayIcon.TrayIcon.CustomDoubleClickCallback">
+            <summary>
+            Overrides the custom double click on tray icon callback.
+            Set to null for default behaviour.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.Activate">
+            <summary>
+            Makes the tray icon visible and hides the corresponding window. 
+            Also shows the BalloonTip.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.Deactivate">
+            <summary>
+            Hides the tray icon and makes the corresponding window visible.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.ShowBalloonTip">
+            <summary>
+            Shows the notification tip. Uses the Properties <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipTime"/>, <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipTitle"/>
+            <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipText"/>. <see cref="P:WpfTrayIcon.TrayIcon.Visible"/> needs to be true.
+            </summary>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.ShowBalloonTip(WpfTrayIcon.ToolTipIcon)">
+            <summary>
+            Shows the notification tip. Uses the Properties <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipTime"/>, <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipTitle"/>
+            <see cref="P:WpfTrayIcon.TrayIcon.BalloonTipText"/>. <see cref="P:WpfTrayIcon.TrayIcon.Visible"/> needs to be true.
+            </summary>
+            <param name="icon">Notification icon.</param>
+        </member>
+        <member name="M:WpfTrayIcon.TrayIcon.ShowBalloonTip(System.Int32,System.String,System.String,WpfTrayIcon.ToolTipIcon)">
+            <summary>
+            Shows the notification tip. <see cref="P:WpfTrayIcon.TrayIcon.Visible"/> needs to be true.
+            </summary>
+            <param name="time">The PREFERED Balloon tip show time. OS might ignore/alter the time!</param>
+            <param name="tipText">Tooltip text.</param>
+            <param name="tipTitle">Tooltip title.</param>
+            <param name="icon">Tooltip icon (None = use tray icon).</param>
+        </member>
+    </members>
+</doc>

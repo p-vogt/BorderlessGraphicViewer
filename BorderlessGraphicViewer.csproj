@@ -107,7 +107,6 @@
     </ApplicationDefinition>
     <Compile Include="Model.cs" />
     <Compile Include="PreviewMouseMiddleButtonDown.cs" />
-    <Compile Include="Sketch.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="ColorWindow.xaml">
       <SubType>Designer</SubType>
@@ -174,10 +173,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BGVStarter\Resources\viewer_image1.ico" />
     <Content Include="copy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Properties\MS-Paint-Icon.png" />
+    <None Include="Resources\MS_Paint_Icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

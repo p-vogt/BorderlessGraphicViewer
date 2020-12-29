@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace BorderlessGraphicViewer
@@ -21,20 +22,23 @@ namespace BorderlessGraphicViewer
 #if DEBUG
         private readonly bool isAppInDebugMode = true;
 #else
-  private readonly bool isAppInDebugMode = false;
+        private readonly bool isAppInDebugMode = false;
 #endif
 
-        private const string INTERNAL_CALL_FLAG = "-internalCall";
-        private readonly ViewModel viewModel;
-        private Sketch sketchController;
+        private ViewModel viewModel => DataContext as ViewModel;
         public MainWindow(string[] args)
         {
             InitializeComponent();
-            viewModel = (ViewModel)DataContext;
+            foreach (var resourceName in Resources.Keys)
+            {
+                if (FindResource(resourceName) is ContextMenu contextMenu)
+                {
+                    contextMenu.DataContext = viewModel;
+                }
+            }
+
             viewModel.Init(img);
             ProcessArguments(args);
-            sketchController = new Sketch(viewModel, this);
-            sketchController.Start();
         }
 
         private void ProcessArguments(string[] args)
@@ -50,13 +54,6 @@ namespace BorderlessGraphicViewer
             if (args.Length > 0)
             {
                 filePath = args[0];
-                if (args.Length == 1
-                    && !isAppInDebugMode)
-                {
-                    StartMirroredSession(filePath);
-                    // close window to send "ack" to Greenshot
-                    keepWindowOpen = false;
-                }
             }
             else
             {
@@ -66,7 +63,7 @@ namespace BorderlessGraphicViewer
 
             if (keepWindowOpen)
             {
-                //keepWindowOpen = viewModel.LoadImage(filePath);
+                keepWindowOpen = viewModel.LoadImage(filePath);
             }
             if (!keepWindowOpen)
             {
@@ -85,11 +82,6 @@ namespace BorderlessGraphicViewer
             return newArgs;
         }
 
-        private static void StartMirroredSession(string filePath)
-        {
-            string path = Assembly.GetExecutingAssembly().CodeBase;
-            Process.Start(path, $"{filePath} {INTERNAL_CALL_FLAG}");
-        }
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             viewModel.SizeChangedCommand.Execute(e);
