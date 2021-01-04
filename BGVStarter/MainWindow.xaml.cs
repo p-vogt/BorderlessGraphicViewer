@@ -34,9 +34,7 @@ namespace BGVStarter
             notifyIcon.Visible = true;
             WindowState = WindowState.Minimized;
             Visibility = Visibility.Hidden;
-            notifyIcon.ShowBalloonTip();
             StartWatching();
-
         }
 
         private ConcurrentQueue<string> ImagePaths = new ConcurrentQueue<string>();
