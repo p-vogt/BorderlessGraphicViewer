@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,46 +35,60 @@ namespace BGVStarter
             notifyIcon.Visible = true;
             WindowState = WindowState.Minimized;
             Visibility = Visibility.Hidden;
+            timer.Elapsed += (_, __) => Process();
+            timer.Interval = 500;
             StartWatching();
         }
 
+        private Timer timer = new Timer();
         private ConcurrentQueue<string> ImagePaths = new ConcurrentQueue<string>();
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
             ImagePaths.Enqueue(e.FullPath);
-            if (ImagePaths.Count() == 2)
+            if (ImagePaths.Count == 1)
             {
-                var paths = ImagePaths.ToList();
-                ImagePaths = new ConcurrentQueue<string>();
-                try
-                {
-
-                    var fileInfo = paths
-                        .Select(x => new FileInfo(x))
-                        .OrderByDescending(info => info.Length)
-                        .First();
-                    var imageFile = fileInfo.FullName;
-                    var assembly = Assembly.GetExecutingAssembly();
-                    string codeBasePath = assembly.CodeBase;
-                    var codeBaseDirectory = System.IO.Path.GetDirectoryName(codeBasePath);
-                    var preText = @"file:\";
-                    var path = codeBaseDirectory + "BorderlessGraphicViewer.exe";
-                    path = path.TrimStart(preText.ToCharArray());
-                    Dispatcher.Invoke(() =>
-                    {
-                        var bgvWindow = new BorderlessGraphicViewer.MainWindow(new string[] { imageFile });
-
-                        bgvWindow.Show();
-                    });
-                }
-                catch (Exception ex)
-                {
-
-                }
+                timer.Start();
+            }
+            else if (ImagePaths.Count() == 2)
+            {
+                Process();
 
             }
             // get Image from clipboard
         }
+
+        private void Process()
+        {
+            timer.Stop();
+            var paths = ImagePaths.ToList();
+            ImagePaths = new ConcurrentQueue<string>();
+            try
+            {
+
+                var fileInfo = paths
+                    .Select(x => new FileInfo(x))
+                    .OrderByDescending(info => info.Length)
+                    .First();
+                var imageFile = fileInfo.FullName;
+                var assembly = Assembly.GetExecutingAssembly();
+                string codeBasePath = assembly.CodeBase;
+                var codeBaseDirectory = System.IO.Path.GetDirectoryName(codeBasePath);
+                var preText = @"file:\";
+                var path = codeBaseDirectory + "BorderlessGraphicViewer.exe";
+                path = path.TrimStart(preText.ToCharArray());
+                Dispatcher.Invoke(() =>
+                {
+                    var bgvWindow = new BorderlessGraphicViewer.MainWindow(new string[] { imageFile });
+
+                    bgvWindow.Show();
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         List<FileSystemWatcher> fileSystemWatchers = new List<FileSystemWatcher>();
         private void StartWatching()
         {
