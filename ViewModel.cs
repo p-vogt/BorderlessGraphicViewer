@@ -274,10 +274,7 @@ namespace BorderlessGraphicViewer
                 SaveAsImageAsPng(dlg.FileName);
             }
         });
-        public ICommand CopyToClipboardCommand => new RelayCommand(() =>
-        {
-            Clipboard.SetImage(Image);
-        });
+        public ICommand CopyToClipboardCommand => new RelayCommand(() =>CopyImageToClipboard());
         public ICommand OpenColorPickerCommand => new RelayCommand<MouseButtonEventArgs>((e) =>
         {
             var pos = e.GetPosition(windowImage);
@@ -378,10 +375,7 @@ namespace BorderlessGraphicViewer
             if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                        && Keyboard.IsKeyDown(Key.C))
             {
-                if (Image != null)
-                {
-                    Clipboard.SetImage(Image);
-                }
+                CopyImageToClipboard();
             }
             else if (Keyboard.IsKeyDown(Key.F5))
             {
@@ -398,6 +392,35 @@ namespace BorderlessGraphicViewer
                 UndoDrawing();
             }
         });
+
+        private void CopyImageToClipboard()
+        {
+            if (Image != null)
+            {
+                int counter = 0;
+                while (counter <= 10)
+                {
+                    try
+                    {
+                        counter++;
+                        Clipboard.SetImage(Image);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (counter > 10)
+                        {
+                            var process = ClipboardUtil.ProcessHoldingClipboard();
+                            MessageBox.Show($"Could not copy the image to the clipboard. Possibly blocked by: '{process?.ProcessName}'", "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
+                            Thread.Sleep(10);
+                        }
+                    }
+                }
+            }
+        }
 
         private void ResetImage()
         {
