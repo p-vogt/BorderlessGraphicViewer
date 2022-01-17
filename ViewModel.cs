@@ -274,7 +274,7 @@ namespace BorderlessGraphicViewer
                 SaveAsImageAsPng(dlg.FileName);
             }
         });
-        public ICommand CopyToClipboardCommand => new RelayCommand(() =>CopyImageToClipboard());
+        public ICommand CopyToClipboardCommand => new RelayCommand(() => CopyImageToClipboard());
         public ICommand OpenColorPickerCommand => new RelayCommand<MouseButtonEventArgs>((e) =>
         {
             var pos = e.GetPosition(windowImage);
@@ -403,6 +403,7 @@ namespace BorderlessGraphicViewer
                     try
                     {
                         counter++;
+                        Clipboard.Clear();
                         Clipboard.SetImage(Image);
                         break;
                     }
