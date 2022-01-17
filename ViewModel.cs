@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -395,32 +396,33 @@ namespace BorderlessGraphicViewer
 
         private void CopyImageToClipboard()
         {
-            if (Image != null)
-            {
-                int counter = 0;
-                while (counter <= 10)
+                if (Image != null)
                 {
-                    try
+                    int counter = 0;
+                    while (counter <= 10)
                     {
-                        counter++;
-                        Clipboard.Clear();
-                        Clipboard.SetImage(Image);
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (counter > 10)
+                        try
                         {
-                            var process = ClipboardUtil.ProcessHoldingClipboard();
-                            MessageBox.Show($"Could not copy the image to the clipboard. Possibly blocked by: '{process?.ProcessName}'", "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            counter++;
+                            ClipboardUtil.CloseClipboard();
+                            Clipboard.Clear();
+                            Clipboard.SetImage(Image);
+                            break;
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Thread.Sleep(10);
+                            if (counter > 10)
+                            {
+                                var process = ClipboardUtil.ProcessHoldingClipboard();
+                                MessageBox.Show($"Could not copy the image to the clipboard. Possibly blocked by: '{process?.ProcessName}'", "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+                            else
+                            {
+                                Thread.Sleep(10);
+                            }
                         }
                     }
                 }
-            }
         }
 
         private void ResetImage()

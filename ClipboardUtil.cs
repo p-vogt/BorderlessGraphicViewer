@@ -13,11 +13,14 @@ namespace BorderlessGraphicViewer
     /// </summary>
     public class ClipboardUtil
     {
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [DllImport("user32.dll")]
         static extern IntPtr GetOpenClipboardWindow();
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CloseClipboard();
 
         ///-----------------------------------------------------------------------------
         /// <summary>
